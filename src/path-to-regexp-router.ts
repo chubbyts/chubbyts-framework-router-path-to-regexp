@@ -3,7 +3,7 @@ import { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
 import { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
 import { Method, Query, ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
 import { compile, match, MatchFunction, PathFunction } from 'path-to-regexp';
-import { createMethodNotAllowed, createNotFound } from '@chubbyts/chubbyts-framework/dist/http-error';
+import { createMethodNotAllowed, createNotFound } from '@chubbyts/chubbyts-http-error/dist/http-error';
 import { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
 import { stringify } from 'qs';
 
@@ -38,14 +38,16 @@ export const createPathToRegexpRouteMatcher = (routes: Routes): Match => {
     }
 
     if (matchWithMethods.length > 0) {
-      throw createMethodNotAllowed(
-        `Method "${method}" at path "${path}" is not allowed. Must be one of: "${matchWithMethods.join('", "')}".`,
-      );
+      throw createMethodNotAllowed({
+        detail: `Method "${method}" at path "${path}" is not allowed. Must be one of: "${matchWithMethods.join(
+          '", "',
+        )}".`,
+      });
     }
 
-    throw createNotFound(
-      `The page "${path}" you are looking for could not be found. Check the address bar to ensure your URL is spelled correctly.`,
-    );
+    throw createNotFound({
+      detail: `The page "${path}" you are looking for could not be found. Check the address bar to ensure your URL is spelled correctly.`,
+    });
   };
 };
 
