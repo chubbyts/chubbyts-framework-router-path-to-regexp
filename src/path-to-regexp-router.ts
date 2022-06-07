@@ -66,7 +66,7 @@ export const createPathToRegexpPathGenerator = (routes: Routes): GeneratePath =>
 
     const compileByName = compilesByName.get(name) as PathFunction;
 
-    return compileByName(attributes) + (undefined !== query ? '?' + stringify(query) : '');
+    return compileByName(attributes) + (undefined !== query ? '?' + stringify(query, { encodeValuesOnly: true }) : '');
   };
 };
 

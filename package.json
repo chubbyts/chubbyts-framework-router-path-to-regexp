@@ -1,6 +1,6 @@
 {
   "name": "@chubbyts/chubbyts-framework-router-path-to-regexp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Path-to-regex routing implementation for chubbyts-framework.",
   "keywords": [
     "chubbyts",

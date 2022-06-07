@@ -96,7 +96,7 @@ describe('path-to-regexp-router', () => {
 
       expect(
         pathToRegexpPathGenerator('name', { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' }, { key: { subKey: 'value' } }),
-      ).toMatchInlineSnapshot(`"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key%5BsubKey%5D=value"`);
+      ).toMatchInlineSnapshot(`"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`);
 
       expect(routes).toHaveBeenCalledTimes(1);
     });
@@ -159,7 +159,7 @@ describe('path-to-regexp-router', () => {
           { key: { subKey: 'value' } },
         ),
       ).toMatchInlineSnapshot(
-        `"https://user:password@localhost:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key%5BsubKey%5D=value"`,
+        `"https://user:password@localhost:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`,
       );
 
       expect(routes).toHaveBeenCalledTimes(1);
@@ -184,7 +184,7 @@ describe('path-to-regexp-router', () => {
           { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
           { key: { subKey: 'value' } },
         ),
-      ).toMatchInlineSnapshot(`"https://localhost/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key%5BsubKey%5D=value"`);
+      ).toMatchInlineSnapshot(`"https://localhost/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`);
 
       expect(routes).toHaveBeenCalledTimes(1);
     });
