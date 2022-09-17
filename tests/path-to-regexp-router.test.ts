@@ -7,6 +7,7 @@ import {
   createPathToRegexpUrlGenerator,
 } from '../src/path-to-regexp-router';
 import { Method, ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
+import { HttpError } from '@chubbyts/chubbyts-http-error/dist/http-error';
 
 describe('path-to-regexp-router', () => {
   describe('createPathToRegexpRouteMatcher', () => {
@@ -21,7 +22,7 @@ describe('path-to-regexp-router', () => {
         pathToRegexpRouteMatcher(request);
         fail('expected error');
       } catch (e) {
-        expect(e).toMatchInlineSnapshot(`
+        expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
           {
             "_httpError": "NotFound",
             "detail": "The page "/" you are looking for could not be found. Check the address bar to ensure your URL is spelled correctly.",
@@ -52,7 +53,7 @@ describe('path-to-regexp-router', () => {
         pathToRegexpRouteMatcher(request);
         fail('expected error');
       } catch (e) {
-        expect(e).toMatchInlineSnapshot(`
+        expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
           {
             "_httpError": "MethodNotAllowed",
             "detail": "Method "GET" at path "/api" is not allowed. Must be one of: "POST", "PUT".",
