@@ -22,9 +22,9 @@ describe('path-to-regexp-router', () => {
         fail('expected error');
       } catch (e) {
         expect(e).toMatchInlineSnapshot(`
-          Object {
+          {
             "_httpError": "NotFound",
-            "detail": "The page \\"/\\" you are looking for could not be found. Check the address bar to ensure your URL is spelled correctly.",
+            "detail": "The page "/" you are looking for could not be found. Check the address bar to ensure your URL is spelled correctly.",
             "status": 404,
             "title": "Not Found",
             "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5",
@@ -53,9 +53,9 @@ describe('path-to-regexp-router', () => {
         fail('expected error');
       } catch (e) {
         expect(e).toMatchInlineSnapshot(`
-          Object {
+          {
             "_httpError": "MethodNotAllowed",
-            "detail": "Method \\"GET\\" at path \\"/api\\" is not allowed. Must be one of: \\"POST\\", \\"PUT\\".",
+            "detail": "Method "GET" at path "/api" is not allowed. Must be one of: "POST", "PUT".",
             "status": 405,
             "title": "Method Not Allowed",
             "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.6",
@@ -76,9 +76,9 @@ describe('path-to-regexp-router', () => {
       const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routes);
 
       expect(pathToRegexpRouteMatcher(request)).toMatchInlineSnapshot(`
-        Object {
+        {
           "_route": "Route",
-          "attributes": Object {},
+          "attributes": {},
           "method": "GET",
           "path": "/api",
         }

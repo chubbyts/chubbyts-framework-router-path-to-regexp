@@ -28,14 +28,14 @@ Path-to-regex routing implementation for [chubbyts-framework][2].
  * [chubbyts/chubbyts-http-error][3]: ^1.0.0
  * [chubbyts/chubbyts-http-types][4]: ^1.0.0
  * [path-to-regexp][5]: ^6.2.1
- * [qs][6]: ^6.10.3
+ * [qs][6]: ^6.11.0
 
 ## Installation
 
 Through [NPM](https://www.npmjs.com) as [@chubbyts/chubbyts-framework-router-path-to-regexp][1].
 
 ```ts
-npm i @chubbyts/chubbyts-framework-router-path-to-regexp@^1.0.2
+npm i @chubbyts/chubbyts-framework-router-path-to-regexp@^1.0.3
 ```
 
 ## Copyright
