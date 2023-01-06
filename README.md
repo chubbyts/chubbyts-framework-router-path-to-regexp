@@ -40,7 +40,7 @@ npm i @chubbyts/chubbyts-framework-router-path-to-regexp@^1.2.0
 
 ## Copyright
 
-Dominik Zogg 2022
+2023 Dominik Zogg
 
 [1]: https://www.npmjs.com/package/@chubbyts/chubbyts-framework-router-path-to-regexp
 [2]: https://www.npmjs.com/package/@chubbyts/chubbyts-framework
