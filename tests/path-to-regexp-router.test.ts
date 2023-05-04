@@ -1,14 +1,16 @@
 import { describe, expect, test } from '@jest/globals';
-import { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
-import { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
+import type { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
+import type { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
+import type { ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
+import { Method } from '@chubbyts/chubbyts-http-types/dist/message';
+import type { HttpError } from '@chubbyts/chubbyts-http-error/dist/http-error';
+import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
+import { useFunctionMock } from '@chubbyts/chubbyts-function-mock/dist/function-mock';
 import {
   createPathToRegexpPathGenerator,
   createPathToRegexpRouteMatcher,
   createPathToRegexpUrlGenerator,
 } from '../src/path-to-regexp-router';
-import { Method, ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
-import { HttpError } from '@chubbyts/chubbyts-http-error/dist/http-error';
-import { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
 
 describe('path-to-regexp-router', () => {
   describe('routes as map', () => {
@@ -94,7 +96,7 @@ describe('path-to-regexp-router', () => {
             { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
             { key: { subKey: 'value' } },
           ),
-        ).toMatchInlineSnapshot(`"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`);
+        ).toMatchInlineSnapshot('"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"');
       });
 
       test('without attributes and query params', () => {
@@ -102,7 +104,7 @@ describe('path-to-regexp-router', () => {
 
         const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routesByName);
 
-        expect(pathToRegexpPathGenerator('name')).toMatchInlineSnapshot(`"/api/pet"`);
+        expect(pathToRegexpPathGenerator('name')).toMatchInlineSnapshot('"/api/pet"');
       });
 
       test('without attributes', () => {
@@ -149,7 +151,7 @@ describe('path-to-regexp-router', () => {
             { key: { subKey: 'value' } },
           ),
         ).toMatchInlineSnapshot(
-          `"https://user:password@localhost:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`,
+          '"https://user:password@localhost:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"',
         );
       });
 
@@ -172,7 +174,7 @@ describe('path-to-regexp-router', () => {
             { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
             { key: { subKey: 'value' } },
           ),
-        ).toMatchInlineSnapshot(`"https://localhost/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`);
+        ).toMatchInlineSnapshot('"https://localhost/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"');
       });
     });
   });
@@ -206,13 +208,15 @@ describe('path-to-regexp-router', () => {
       test('method not allowed', () => {
         const request = { method: Method.GET, uri: { path: '/api' } } as ServerRequest;
 
-        const routes: Routes = jest.fn(
-          () =>
-            new Map([
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([
               ['name1', { method: Method.POST, path: '/api', _route: 'Route' } as Route],
               ['name2', { method: Method.PUT, path: '/api', _route: 'Route' } as Route],
             ]),
-        );
+          },
+        ]);
 
         const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routes);
 
@@ -231,15 +235,18 @@ describe('path-to-regexp-router', () => {
           `);
         }
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
 
       test('matched', () => {
         const request = { method: Method.GET, uri: { path: '/api' } } as ServerRequest;
 
-        const routes: Routes = jest.fn(
-          () => new Map([['name', { method: Method.GET, path: '/api', _route: 'Route' } as Route]]),
-        );
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([['name', { method: Method.GET, path: '/api', _route: 'Route' } as Route]]),
+          },
+        ]);
 
         const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routes);
 
@@ -252,13 +259,18 @@ describe('path-to-regexp-router', () => {
           }
         `);
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
     });
 
     describe('createPathToRegexpPathGenerator', () => {
       test('with attributes and query params', () => {
-        const routes: Routes = jest.fn(() => new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]));
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]),
+          },
+        ]);
 
         const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routes);
 
@@ -268,23 +280,33 @@ describe('path-to-regexp-router', () => {
             { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
             { key: { subKey: 'value' } },
           ),
-        ).toMatchInlineSnapshot(`"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`);
+        ).toMatchInlineSnapshot('"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"');
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
 
       test('without attributes and query params', () => {
-        const routes: Routes = jest.fn(() => new Map([['name', { path: '/api/pet', _route: 'Route' } as Route]]));
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([['name', { path: '/api/pet', _route: 'Route' } as Route]]),
+          },
+        ]);
 
         const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routes);
 
-        expect(pathToRegexpPathGenerator('name')).toMatchInlineSnapshot(`"/api/pet"`);
+        expect(pathToRegexpPathGenerator('name')).toMatchInlineSnapshot('"/api/pet"');
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
 
       test('without attributes', () => {
-        const routes: Routes = jest.fn(() => new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]));
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]),
+          },
+        ]);
 
         const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routes);
 
@@ -292,11 +314,16 @@ describe('path-to-regexp-router', () => {
           pathToRegexpPathGenerator('name');
         }).toThrow('Expected "id" to be a string');
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
 
       test('with missing route', () => {
-        const routes: Routes = jest.fn(() => new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]));
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]),
+          },
+        ]);
 
         const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routes);
 
@@ -304,7 +331,7 @@ describe('path-to-regexp-router', () => {
           pathToRegexpPathGenerator('noname');
         }).toThrow('Missing route: "noname"');
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
     });
 
@@ -319,7 +346,12 @@ describe('path-to-regexp-router', () => {
           },
         } as unknown as ServerRequest;
 
-        const routes: Routes = jest.fn(() => new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]));
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]),
+          },
+        ]);
 
         const pathToRegexpUrlGenerator = createPathToRegexpUrlGenerator(createPathToRegexpPathGenerator(routes));
 
@@ -331,10 +363,10 @@ describe('path-to-regexp-router', () => {
             { key: { subKey: 'value' } },
           ),
         ).toMatchInlineSnapshot(
-          `"https://user:password@localhost:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`,
+          '"https://user:password@localhost:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"',
         );
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
 
       test('without userInfo and without port', () => {
@@ -345,7 +377,12 @@ describe('path-to-regexp-router', () => {
           },
         } as unknown as ServerRequest;
 
-        const routes: Routes = jest.fn(() => new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]));
+        const [routes, routesMock] = useFunctionMock<Routes>([
+          {
+            parameters: [],
+            return: new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]),
+          },
+        ]);
 
         const pathToRegexpUrlGenerator = createPathToRegexpUrlGenerator(createPathToRegexpPathGenerator(routes));
 
@@ -356,9 +393,9 @@ describe('path-to-regexp-router', () => {
             { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
             { key: { subKey: 'value' } },
           ),
-        ).toMatchInlineSnapshot(`"https://localhost/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"`);
+        ).toMatchInlineSnapshot('"https://localhost/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"');
 
-        expect(routes).toHaveBeenCalledTimes(1);
+        expect(routesMock.length).toBe(0);
       });
     });
   });

@@ -1,11 +1,12 @@
-import { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
-import { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
-import { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
-import { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
-import { Method, Query, ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
-import { compile, match, MatchFunction, PathFunction } from 'path-to-regexp';
+import type { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
+import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
+import type { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
+import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
+import type { Method, Query, ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
+import type { MatchFunction, PathFunction } from 'path-to-regexp';
+import { compile, match } from 'path-to-regexp';
 import { createMethodNotAllowed, createNotFound } from '@chubbyts/chubbyts-http-error/dist/http-error';
-import { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
+import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
 import { stringify } from 'qs';
 
 export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): Match => {
@@ -35,6 +36,7 @@ export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): M
         return { ...route, attributes: matchedPath.params as Record<string, string> };
       }
 
+      // eslint-disable-next-line functional/immutable-data
       matchWithMethods.push(routeMethod);
     }
 
