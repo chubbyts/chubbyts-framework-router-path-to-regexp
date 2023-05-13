@@ -24,9 +24,9 @@ Path-to-regex routing implementation for [chubbyts-framework][2].
 ## Requirements
 
  * node: 16
- * [chubbyts/chubbyts-framework][2]: ^1.1.1
- * [chubbyts/chubbyts-http-error][3]: ^2.1.1
- * [chubbyts/chubbyts-http-types][4]: ^1.0.1
+ * [chubbyts/chubbyts-framework][2]: ^1.8.0
+ * [chubbyts/chubbyts-http-error][3]: ^2.2.0
+ * [chubbyts/chubbyts-http-types][4]: ^1.1.0
  * [path-to-regexp][5]: ^6.2.1
  * [qs][6]: ^6.11.1
 
