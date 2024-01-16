@@ -9,6 +9,17 @@ import { createMethodNotAllowed, createNotFound } from '@chubbyts/chubbyts-http-
 import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
 import { stringify } from 'qs';
 
+/**
+ * ```ts
+ * import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
+ * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
+ * import { createPathToRegexpRouteMatcher } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ *
+ * const routesByName: RoutesByName = ...;
+ *
+ * const pathToRegexpRouteMatcher: Match = createPathToRegexpRouteMatcher(routesByName);
+ * ```
+ */
 export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): Match => {
   const routesByName = typeof routes === 'function' ? routes() : routes;
   const matchersByName: Map<string, MatchFunction> = new Map(
@@ -54,6 +65,17 @@ export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): M
   };
 };
 
+/**
+ * ```ts
+ * import type { GeneratePath } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
+ * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
+ * import { createPathToRegexpPathGenerator } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ *
+ * const routesByName: RoutesByName = ...;
+ *
+ * const pathToRegexpPathGenerator: GeneratePath = createPathToRegexpPathGenerator(routesByName);
+ * ```
+ */
 export const createPathToRegexpPathGenerator = (routes: Routes | RoutesByName): GeneratePath => {
   const routesByName = typeof routes === 'function' ? routes() : routes;
   const compilesByName: Map<string, PathFunction> = new Map(
@@ -73,6 +95,17 @@ export const createPathToRegexpPathGenerator = (routes: Routes | RoutesByName): 
   };
 };
 
+/**
+ * ```ts
+ * import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
+ * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
+ * import { createPathToRegexpUrlGenerator } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ *
+ * const generatePath: GeneratePath = ...;
+ *
+ * const pathToRegexpUrlGenerator: GenerateUrl = createPathToRegexpUrlGenerator(generatePath);
+ * ```
+ */
 export const createPathToRegexpUrlGenerator = (generatePath: GeneratePath): GenerateUrl => {
   return (request: ServerRequest, name: string, attributes?: Record<string, string>, query?: Query) => {
     const { schema, userInfo, host, port } = request.uri;
