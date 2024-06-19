@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test, vi } from 'vitest';
 import type { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
 import type { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
 import type { ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
@@ -183,7 +183,7 @@ describe('path-to-regexp-router', () => {
       test('not found', () => {
         const request = { method: Method.GET, uri: { path: '/' } } as ServerRequest;
 
-        const routes: Routes = jest.fn(() => new Map([['name', { path: '/api', _route: 'Route' } as Route]]));
+        const routes: Routes = vi.fn(() => new Map([['name', { path: '/api', _route: 'Route' } as Route]]));
 
         const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routes);
 
