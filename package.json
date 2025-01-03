@@ -1,7 +1,7 @@
 {
   "name": "@chubbyts/chubbyts-framework-router-path-to-regexp",
   "type": "module",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Path-to-regex routing implementation for chubbyts-framework.",
   "keywords": [
     "chubbyts",
@@ -14,11 +14,11 @@
   "license": "MIT",
   "repository": "chubbyts/chubbyts-framework-router-path-to-regexp",
   "scripts": {
-    "build": "node ./build.js",
+    "build": "node ./build.mjs",
     "cs-fix": "prettier --write src tests",
     "cs": "prettier --check src tests",
     "infection": "stryker run",
-    "lint-fix": "eslint src tests --fix",
+    "lint-fix": "eslint src tests eslint.config.mjs vitest.config.ts --fix",
     "lint": "eslint src tests",
     "prepare": "npm run build",
     "test": "vitest",
@@ -42,28 +42,28 @@
     }
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "dependencies": {
-    "@chubbyts/chubbyts-framework": "^1.9.4",
-    "@chubbyts/chubbyts-http-error": "^2.3.1",
-    "@chubbyts/chubbyts-http-types": "^1.2.3",
-    "path-to-regexp": "^6.2.2",
-    "qs": "^6.12.1"
+    "@chubbyts/chubbyts-framework": "^1.10.0",
+    "@chubbyts/chubbyts-http-error": "^2.4.0",
+    "@chubbyts/chubbyts-http-types": "^1.3.0",
+    "path-to-regexp": "^8.2.0",
+    "qs": "^6.13.1"
   },
   "devDependencies": {
-    "@chubbyts/chubbyts-eslint": "^2.0.7",
-    "@chubbyts/chubbyts-function-mock": "^1.4.3",
-    "@chubbyts/chubbyts-packaging": "^2.0.7",
-    "@stryker-mutator/core": "^8.2.6",
-    "@stryker-mutator/vitest-runner": "^8.2.6",
-    "@types/node": "^20.14.6",
-    "@types/qs": "^6.9.15",
-    "@vitest/coverage-v8": "^1.6.0",
-    "prettier": "^3.3.2",
-    "typedoc": "^0.25.13",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
+    "@chubbyts/chubbyts-eslint": "^3.0.1",
+    "@chubbyts/chubbyts-function-mock": "^1.5.1",
+    "@chubbyts/chubbyts-packaging": "^3.0.0",
+    "@stryker-mutator/core": "^8.7.1",
+    "@stryker-mutator/vitest-runner": "^8.7.1",
+    "@types/node": "^22.10.5",
+    "@types/qs": "^6.9.17",
+    "@vitest/coverage-v8": "^2.1.8",
+    "prettier": "^3.4.2",
+    "typedoc": "^0.27.6",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   },
   "publishConfig": {
     "access": "public"

@@ -24,7 +24,7 @@ describe('path-to-regexp-router', () => {
 
         try {
           pathToRegexpRouteMatcher(request);
-          fail('expected error');
+          throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
             {
@@ -50,7 +50,7 @@ describe('path-to-regexp-router', () => {
 
         try {
           pathToRegexpRouteMatcher(request);
-          fail('expected error');
+          throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
             {
@@ -114,7 +114,7 @@ describe('path-to-regexp-router', () => {
 
         expect(() => {
           pathToRegexpPathGenerator('name');
-        }).toThrow('Expected "id" to be a string');
+        }).toThrow('Missing parameters: id');
       });
 
       test('with missing route', () => {
@@ -189,7 +189,7 @@ describe('path-to-regexp-router', () => {
 
         try {
           pathToRegexpRouteMatcher(request);
-          fail('expected error');
+          throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
             {
@@ -222,7 +222,7 @@ describe('path-to-regexp-router', () => {
 
         try {
           pathToRegexpRouteMatcher(request);
-          fail('expected error');
+          throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
             {
@@ -312,7 +312,7 @@ describe('path-to-regexp-router', () => {
 
         expect(() => {
           pathToRegexpPathGenerator('name');
-        }).toThrow('Expected "id" to be a string');
+        }).toThrow('Missing parameters: id');
 
         expect(routesMock.length).toBe(0);
       });
