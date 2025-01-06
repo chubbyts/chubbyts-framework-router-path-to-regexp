@@ -114,7 +114,7 @@ describe('path-to-regexp-router', () => {
 
         expect(() => {
           pathToRegexpPathGenerator('name');
-        }).toThrow('Missing parameters: id');
+        }).toThrow('Expected "id" to be a string');
       });
 
       test('with missing route', () => {
@@ -312,7 +312,7 @@ describe('path-to-regexp-router', () => {
 
         expect(() => {
           pathToRegexpPathGenerator('name');
-        }).toThrow('Missing parameters: id');
+        }).toThrow('Expected "id" to be a string');
 
         expect(routesMock.length).toBe(0);
       });
