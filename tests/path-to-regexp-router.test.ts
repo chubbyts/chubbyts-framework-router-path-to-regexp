@@ -2,7 +2,6 @@ import { describe, expect, test, vi } from 'vitest';
 import type { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
 import type { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
 import type { ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
-import { Method } from '@chubbyts/chubbyts-http-types/dist/message';
 import type { HttpError } from '@chubbyts/chubbyts-http-error/dist/http-error';
 import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
 import { useFunctionMock } from '@chubbyts/chubbyts-function-mock/dist/function-mock';
@@ -16,7 +15,7 @@ describe('path-to-regexp-router', () => {
   describe('routes as map', () => {
     describe('createPathToRegexpRouteMatcher', () => {
       test('not found', () => {
-        const request = { method: Method.GET, uri: { path: '/' } } as ServerRequest;
+        const request = { method: 'GET', uri: { path: '/' } } as ServerRequest;
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api', _route: 'Route' } as Route]]);
 
@@ -39,11 +38,11 @@ describe('path-to-regexp-router', () => {
       });
 
       test('method not allowed', () => {
-        const request = { method: Method.GET, uri: { path: '/api' } } as ServerRequest;
+        const request = { method: 'GET', uri: { path: '/api' } } as ServerRequest;
 
         const routesByName: RoutesByName = new Map([
-          ['name1', { method: Method.POST, path: '/api', _route: 'Route' } as Route],
-          ['name2', { method: Method.PUT, path: '/api', _route: 'Route' } as Route],
+          ['name1', { method: 'POST', path: '/api', _route: 'Route' } as Route],
+          ['name2', { method: 'PUT', path: '/api', _route: 'Route' } as Route],
         ]);
 
         const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
@@ -65,10 +64,10 @@ describe('path-to-regexp-router', () => {
       });
 
       test('matched', () => {
-        const request = { method: Method.GET, uri: { path: '/api' } } as ServerRequest;
+        const request = { method: 'GET', uri: { path: '/api' } } as ServerRequest;
 
         const routesByName: RoutesByName = new Map([
-          ['name', { method: Method.GET, path: '/api', _route: 'Route' } as Route],
+          ['name', { method: 'GET', path: '/api', _route: 'Route' } as Route],
         ]);
 
         const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
@@ -181,7 +180,7 @@ describe('path-to-regexp-router', () => {
   describe('routes as function', () => {
     describe('createPathToRegexpRouteMatcher', () => {
       test('not found', () => {
-        const request = { method: Method.GET, uri: { path: '/' } } as ServerRequest;
+        const request = { method: 'GET', uri: { path: '/' } } as ServerRequest;
 
         const routes: Routes = vi.fn(() => new Map([['name', { path: '/api', _route: 'Route' } as Route]]));
 
@@ -206,14 +205,14 @@ describe('path-to-regexp-router', () => {
       });
 
       test('method not allowed', () => {
-        const request = { method: Method.GET, uri: { path: '/api' } } as ServerRequest;
+        const request = { method: 'GET', uri: { path: '/api' } } as ServerRequest;
 
         const [routes, routesMock] = useFunctionMock<Routes>([
           {
             parameters: [],
             return: new Map([
-              ['name1', { method: Method.POST, path: '/api', _route: 'Route' } as Route],
-              ['name2', { method: Method.PUT, path: '/api', _route: 'Route' } as Route],
+              ['name1', { method: 'POST', path: '/api', _route: 'Route' } as Route],
+              ['name2', { method: 'PUT', path: '/api', _route: 'Route' } as Route],
             ]),
           },
         ]);
@@ -239,12 +238,12 @@ describe('path-to-regexp-router', () => {
       });
 
       test('matched', () => {
-        const request = { method: Method.GET, uri: { path: '/api' } } as ServerRequest;
+        const request = { method: 'GET', uri: { path: '/api' } } as ServerRequest;
 
         const [routes, routesMock] = useFunctionMock<Routes>([
           {
             parameters: [],
-            return: new Map([['name', { method: Method.GET, path: '/api', _route: 'Route' } as Route]]),
+            return: new Map([['name', { method: 'GET', path: '/api', _route: 'Route' } as Route]]),
           },
         ]);
 
