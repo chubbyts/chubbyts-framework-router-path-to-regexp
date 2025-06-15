@@ -22,7 +22,7 @@ import { stringify } from 'qs';
  */
 export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): Match => {
   const routesByName = typeof routes === 'function' ? routes() : routes;
-  const matchersByName: Map<string, MatchFunction> = new Map(
+  const matchersByName: Map<string, MatchFunction<Record<string, string>>> = new Map(
     Array.from(routesByName.entries()).map(([name, route]) => [name, match(route.path)]),
   );
 
@@ -33,7 +33,7 @@ export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): M
     const matchWithMethods: Array<Method> = [];
 
     for (const [name, route] of routesByName.entries()) {
-      const matcherByName = matchersByName.get(name) as MatchFunction;
+      const matcherByName = matchersByName.get(name) as MatchFunction<Record<string, string>>;
 
       const matchedPath = matcherByName(path);
 
@@ -78,7 +78,7 @@ export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): M
  */
 export const createPathToRegexpPathGenerator = (routes: Routes | RoutesByName): GeneratePath => {
   const routesByName = typeof routes === 'function' ? routes() : routes;
-  const compilesByName: Map<string, PathFunction> = new Map(
+  const compilesByName: Map<string, PathFunction<Record<string, string>>> = new Map(
     Array.from(routesByName.entries()).map(([name, route]) => [name, compile(route.path)]),
   );
 
@@ -89,7 +89,7 @@ export const createPathToRegexpPathGenerator = (routes: Routes | RoutesByName): 
       throw new Error(`Missing route: "${name}"`);
     }
 
-    const compileByName = compilesByName.get(name) as PathFunction;
+    const compileByName = compilesByName.get(name) as PathFunction<Record<string, string>>;
 
     return compileByName(attributes) + (undefined !== query ? '?' + stringify(query, { encodeValuesOnly: true }) : '');
   };
