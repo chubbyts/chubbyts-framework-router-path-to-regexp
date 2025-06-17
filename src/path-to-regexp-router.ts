@@ -1,6 +1,5 @@
 import type { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
 import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
-import type { Routes } from '@chubbyts/chubbyts-framework/dist/router/routes';
 import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
 import type { Method, Query, ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
 import type { MatchFunction, PathFunction } from 'path-to-regexp';
@@ -20,8 +19,7 @@ import { stringify } from 'qs';
  * const pathToRegexpRouteMatcher: Match = createPathToRegexpRouteMatcher(routesByName);
  * ```
  */
-export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): Match => {
-  const routesByName = typeof routes === 'function' ? routes() : routes;
+export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Match => {
   const matchersByName: Map<string, MatchFunction<Record<string, string>>> = new Map(
     Array.from(routesByName.entries()).map(([name, route]) => [name, match(route.path)]),
   );
@@ -76,8 +74,7 @@ export const createPathToRegexpRouteMatcher = (routes: Routes | RoutesByName): M
  * const pathToRegexpPathGenerator: GeneratePath = createPathToRegexpPathGenerator(routesByName);
  * ```
  */
-export const createPathToRegexpPathGenerator = (routes: Routes | RoutesByName): GeneratePath => {
-  const routesByName = typeof routes === 'function' ? routes() : routes;
+export const createPathToRegexpPathGenerator = (routesByName: RoutesByName): GeneratePath => {
   const compilesByName: Map<string, PathFunction<Record<string, string>>> = new Map(
     Array.from(routesByName.entries()).map(([name, route]) => [name, compile(route.path)]),
   );
