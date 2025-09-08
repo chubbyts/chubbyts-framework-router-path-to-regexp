@@ -1,12 +1,11 @@
 import type { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
 import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
 import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
-import type { Method, Query, ServerRequest } from '@chubbyts/chubbyts-http-types/dist/message';
 import type { MatchFunction, PathFunction } from 'path-to-regexp';
 import { compile, match } from 'path-to-regexp';
 import { createMethodNotAllowed, createNotFound } from '@chubbyts/chubbyts-http-error/dist/http-error';
 import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
-import { stringify } from 'qs';
+import type { ServerRequest } from '@chubbyts/chubbyts-undici-server/dist/server';
 
 /**
  * ```ts
@@ -26,9 +25,11 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
 
   return (request: ServerRequest): Route => {
     const method = request.method;
-    const path = decodeURI(request.uri.path);
+    const url = new URL(request.url);
 
-    const matchWithMethods: Array<Method> = [];
+    const path = decodeURI(url.pathname);
+
+    const matchWithMethods: Array<string> = [];
 
     for (const [name, route] of routesByName.entries()) {
       const matcherByName = matchersByName.get(name) as MatchFunction<Record<string, string>>;
@@ -79,7 +80,7 @@ export const createPathToRegexpPathGenerator = (routesByName: RoutesByName): Gen
     Array.from(routesByName.entries()).map(([name, route]) => [name, compile(route.path)]),
   );
 
-  return (name: string, attributes?: Record<string, string>, query?: Query) => {
+  return (name: string, attributes?: Record<string, string>, query?: string) => {
     const route = routesByName.get(name);
 
     if (undefined === route) {
@@ -88,7 +89,7 @@ export const createPathToRegexpPathGenerator = (routesByName: RoutesByName): Gen
 
     const compileByName = compilesByName.get(name) as PathFunction<Record<string, string>>;
 
-    return compileByName(attributes) + (undefined !== query ? '?' + stringify(query, { encodeValuesOnly: true }) : '');
+    return compileByName(attributes) + (undefined !== query ? '?' + query : '');
   };
 };
 
@@ -104,10 +105,17 @@ export const createPathToRegexpPathGenerator = (routesByName: RoutesByName): Gen
  * ```
  */
 export const createPathToRegexpUrlGenerator = (generatePath: GeneratePath): GenerateUrl => {
-  return (request: ServerRequest, name: string, attributes?: Record<string, string>, query?: Query) => {
-    const { schema, userInfo, host, port } = request.uri;
+  return (serverRequest: ServerRequest, name: string, attributes?: Record<string, string>, query?: string) => {
+    const { protocol, username, password, hostname, port } = new URL(serverRequest.url);
     const path = generatePath(name, attributes, query);
 
-    return schema + '://' + (userInfo ? userInfo + '@' : '') + host + (port ? ':' + port : '') + path;
+    return (
+      protocol +
+      '//' +
+      (username && password ? `${username}:${password}@` : '') +
+      hostname +
+      (port ? ':' + port : '') +
+      path
+    );
   };
 };

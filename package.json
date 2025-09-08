@@ -1,11 +1,10 @@
 {
   "name": "@chubbyts/chubbyts-framework-router-path-to-regexp",
   "type": "module",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Path-to-regex routing implementation for chubbyts-framework.",
   "keywords": [
     "chubbyts",
-    "microframework",
     "micro framework",
     "router",
     "psr-15"
@@ -44,25 +43,23 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@chubbyts/chubbyts-framework": "^2.0.0",
-    "@chubbyts/chubbyts-http-error": "^3.0.0",
-    "@chubbyts/chubbyts-http-types": "^3.0.0",
-    "path-to-regexp": "^8.2.0",
-    "qs": "^6.14.0"
+    "@chubbyts/chubbyts-framework": "^3.0.0",
+    "@chubbyts/chubbyts-http-error": "^3.0.1",
+    "@chubbyts/chubbyts-undici-server": "1.0.0",
+    "path-to-regexp": "^8.3.0"
   },
   "devDependencies": {
-    "@chubbyts/chubbyts-eslint": "^4.0.2",
-    "@chubbyts/chubbyts-function-mock": "^2.0.1",
-    "@chubbyts/chubbyts-packaging": "^4.0.0",
-    "@stryker-mutator/core": "^9.0.1",
-    "@stryker-mutator/vitest-runner": "^9.0.1",
-    "@types/node": "^24.0.1",
-    "@types/qs": "^6.14.0",
-    "@vitest/coverage-v8": "^3.2.3",
-    "prettier": "^3.5.3",
-    "typedoc": "^0.28.5",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.3"
+    "@chubbyts/chubbyts-eslint": "^4.0.7",
+    "@chubbyts/chubbyts-function-mock": "^2.0.2",
+    "@chubbyts/chubbyts-packaging": "^4.0.1",
+    "@stryker-mutator/core": "^9.1.1",
+    "@stryker-mutator/vitest-runner": "^9.1.1",
+    "@types/node": "^24.3.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "prettier": "^3.6.2",
+    "typedoc": "^0.28.12",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
   "publishConfig": {
     "access": "public"
