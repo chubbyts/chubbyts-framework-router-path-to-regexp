@@ -59,7 +59,7 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
     }
 
     throw createNotFound({
-      detail: `The page "${path}" you are looking for could not be found. Check the address bar to ensure your URL is spelled correctly.`,
+      detail: `The path "${path}" you are looking for could not be found.`,
     });
   };
 };

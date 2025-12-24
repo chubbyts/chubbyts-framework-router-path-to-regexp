@@ -26,7 +26,7 @@ describe('path-to-regexp-router', () => {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
             {
               "_httpError": "NotFound",
-              "detail": "The page "/" you are looking for could not be found. Check the address bar to ensure your URL is spelled correctly.",
+              "detail": "The path "/" you are looking for could not be found.",
               "status": 404,
               "title": "Not Found",
               "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5",
