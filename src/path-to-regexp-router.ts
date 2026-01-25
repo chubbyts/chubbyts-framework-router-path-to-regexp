@@ -24,7 +24,6 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
   );
 
   return (request: ServerRequest): Route => {
-    const method = request.method;
     const url = new URL(request.url);
 
     const path = decodeURI(url.pathname);
@@ -40,19 +39,17 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
         continue;
       }
 
-      const routeMethod = route.method;
-
-      if (routeMethod === method) {
+      if (route.method === request.method) {
         return { ...route, attributes: matchedPath.params as Record<string, string> };
       }
 
       // eslint-disable-next-line functional/immutable-data
-      matchWithMethods.push(routeMethod);
+      matchWithMethods.push(route.method);
     }
 
     if (matchWithMethods.length > 0) {
       throw createMethodNotAllowed({
-        detail: `Method "${method}" at path "${path}" is not allowed. Must be one of: "${matchWithMethods.join(
+        detail: `Method "${request.method}" at path "${path}" is not allowed. Must be one of: "${matchWithMethods.join(
           '", "',
         )}".`,
       });
