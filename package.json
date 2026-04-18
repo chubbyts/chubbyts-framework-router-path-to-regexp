@@ -1,7 +1,7 @@
 {
   "name": "@chubbyts/chubbyts-framework-router-path-to-regexp",
   "type": "module",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Path-to-regex routing implementation for chubbyts-framework.",
   "keywords": [
     "chubbyts",
@@ -13,7 +13,7 @@
   "license": "MIT",
   "repository": "chubbyts/chubbyts-framework-router-path-to-regexp",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -Rf dist && tsc",
     "cs-fix": "prettier --write src tests",
     "cs": "prettier --check src tests",
     "infection": "stryker run",
@@ -43,14 +43,14 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@chubbyts/chubbyts-framework": "^3.1.1",
-    "@chubbyts/chubbyts-http-error": "^3.2.0",
-    "@chubbyts/chubbyts-undici-server": "1.1.1",
+    "@chubbyts/chubbyts-framework": "^3.1.2",
+    "@chubbyts/chubbyts-http-error": "^3.2.1",
+    "@chubbyts/chubbyts-undici-server": "1.1.2",
     "path-to-regexp": "^8.4.2"
   },
   "devDependencies": {
-    "@chubbyts/chubbyts-eslint": "^5.1.0",
-    "@chubbyts/chubbyts-function-mock": "^2.1.0",
+    "@chubbyts/chubbyts-eslint": "^5.1.1",
+    "@chubbyts/chubbyts-function-mock": "^2.1.1",
     "@stryker-mutator/core": "^9.6.1",
     "@stryker-mutator/vitest-runner": "^9.6.1",
     "@types/node": "^25.6.0",

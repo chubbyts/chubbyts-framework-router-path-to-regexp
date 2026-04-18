@@ -24,9 +24,9 @@ Path-to-regex routing implementation for [chubbyts-framework][2].
 ## Requirements
 
  * node: 22
- * [@chubbyts/chubbyts-framework][2]: ^3.1.1
- * [@chubbyts/chubbyts-http-error][3]: ^3.2.0
- * [@chubbyts/chubbyts-undici-server][4]: ^1.1.1
+ * [@chubbyts/chubbyts-framework][2]: ^3.1.2
+ * [@chubbyts/chubbyts-http-error][3]: ^3.2.1
+ * [@chubbyts/chubbyts-undici-server][4]: ^1.1.2
  * [path-to-regexp][5]: ^8.4.2
 
 ## Installation
@@ -34,7 +34,7 @@ Path-to-regex routing implementation for [chubbyts-framework][2].
 Through [NPM](https://www.npmjs.com) as [@chubbyts/chubbyts-framework-router-path-to-regexp][1].
 
 ```ts
-npm i @chubbyts/chubbyts-framework-router-path-to-regexp@^3.1.1
+npm i @chubbyts/chubbyts-framework-router-path-to-regexp@^3.1.2
 ```
 
 ## Copyright
