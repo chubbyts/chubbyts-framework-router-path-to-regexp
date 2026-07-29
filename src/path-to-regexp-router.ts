@@ -43,7 +43,7 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
         return { ...route, attributes: matchedPath.params as Record<string, string> };
       }
 
-      // eslint-disable-next-line functional/immutable-data
+      // oxlint-disable-next-line functional/immutable-data
       matchWithMethods.push(route.method);
     }
 
