@@ -141,6 +141,25 @@ describe('path-to-regexp-router', () => {
         );
       });
 
+      test('with username but without password and with port', () => {
+        const serverRequest = { method: 'GET', url: 'https://user@example.com:10443/api' } as ServerRequest;
+
+        const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
+
+        const pathToRegexpUrlGenerator = createPathToRegexpUrlGenerator(createPathToRegexpPathGenerator(routesByName));
+
+        expect(
+          pathToRegexpUrlGenerator(
+            serverRequest,
+            'name',
+            { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
+            'key[subKey]=value',
+          ),
+        ).toMatchInlineSnapshot(
+          '"https://example.com:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"',
+        );
+      });
+
       test('without userInfo and without port', () => {
         const serverRequest = { method: 'GET', url: 'https://example.com/api' } as ServerRequest;
 
