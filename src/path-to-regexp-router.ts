@@ -3,9 +3,23 @@ import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-match
 import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
 import type { MatchFunction, PathFunction } from 'path-to-regexp';
 import { compile, match } from 'path-to-regexp';
-import { createMethodNotAllowed, createNotFound } from '@chubbyts/chubbyts-http-error/dist/http-error';
+import {
+  createBadRequest,
+  createMethodNotAllowed,
+  createNotFound,
+} from '@chubbyts/chubbyts-http-error/dist/http-error';
 import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
 import type { ServerRequest } from '@chubbyts/chubbyts-undici-server/dist/server';
+
+const decodePathname = (pathname: string): string => {
+  try {
+    return decodeURI(pathname);
+  } catch {
+    throw createBadRequest({
+      detail: `The path "${pathname}" contains invalid percent-encoding.`,
+    });
+  }
+};
 
 /**
  * ```ts
@@ -26,21 +40,21 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
   return (request: ServerRequest): Route => {
     const url = new URL(request.url);
 
-    const path = decodeURI(url.pathname);
+    const pathname = decodePathname(url.pathname);
 
     const matchWithMethods: Array<string> = [];
 
     for (const [name, route] of routesByName.entries()) {
       const matcherByName = matchersByName.get(name) as MatchFunction<Record<string, string>>;
 
-      const matchedPath = matcherByName(path);
+      const matchedPathname = matcherByName(pathname);
 
-      if (!matchedPath) {
+      if (!matchedPathname) {
         continue;
       }
 
       if (route.method === request.method) {
-        return { ...route, attributes: matchedPath.params as Record<string, string> };
+        return { ...route, attributes: matchedPathname.params as Record<string, string> };
       }
 
       // oxlint-disable-next-line functional/immutable-data
@@ -49,14 +63,14 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
 
     if (matchWithMethods.length > 0) {
       throw createMethodNotAllowed({
-        detail: `Method "${request.method}" at path "${path}" is not allowed. Must be one of: "${matchWithMethods.join(
+        detail: `Method "${request.method}" at path "${url.pathname}" is not allowed. Must be one of: "${matchWithMethods.join(
           '", "',
         )}".`,
       });
     }
 
     throw createNotFound({
-      detail: `The path "${path}" you are looking for could not be found.`,
+      detail: `The path "${url.pathname}" you are looking for could not be found.`,
     });
   };
 };

@@ -35,6 +35,55 @@ describe('path-to-regexp-router', () => {
         }
       });
 
+      test('bad request on invalid percent-encoding', () => {
+        const serverRequest = { method: 'GET', url: 'https://example.com/%zz' } as ServerRequest;
+
+        const routesByName: RoutesByName = new Map([['name', { path: '/api', _route: 'Route' } as Route]]);
+
+        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+
+        try {
+          pathToRegexpRouteMatcher(serverRequest);
+          throw new Error('expected error');
+        } catch (e) {
+          expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
+            {
+              "_httpError": "BadRequest",
+              "detail": "The path "/%zz" contains invalid percent-encoding.",
+              "status": 400,
+              "title": "Bad Request",
+              "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1",
+            }
+          `);
+        }
+      });
+
+      test('not found keeps the path percent-encoded', () => {
+        const serverRequest = {
+          method: 'GET',
+          url: 'https://example.com/<script>alert(document.domain)</script>',
+        } as ServerRequest;
+
+        const routesByName: RoutesByName = new Map([['name', { path: '/api', _route: 'Route' } as Route]]);
+
+        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+
+        try {
+          pathToRegexpRouteMatcher(serverRequest);
+          throw new Error('expected error');
+        } catch (e) {
+          expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
+            {
+              "_httpError": "NotFound",
+              "detail": "The path "/%3Cscript%3Ealert(document.domain)%3C/script%3E" you are looking for could not be found.",
+              "status": 404,
+              "title": "Not Found",
+              "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5",
+            }
+          `);
+        }
+      });
+
       test('method not allowed', () => {
         const serverRequest = { method: 'GET', url: 'https://example.com/api' } as ServerRequest;
 
@@ -53,6 +102,34 @@ describe('path-to-regexp-router', () => {
             {
               "_httpError": "MethodNotAllowed",
               "detail": "Method "GET" at path "/api" is not allowed. Must be one of: "POST", "PUT".",
+              "status": 405,
+              "title": "Method Not Allowed",
+              "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.6",
+            }
+          `);
+        }
+      });
+
+      test('method not allowed keeps the path percent-encoded', () => {
+        const serverRequest = {
+          method: 'GET',
+          url: 'https://example.com/api/<img src=x onerror=alert(document.domain)>',
+        } as ServerRequest;
+
+        const routesByName: RoutesByName = new Map([
+          ['name', { method: 'POST', path: '/api/:id', _route: 'Route' } as Route],
+        ]);
+
+        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+
+        try {
+          pathToRegexpRouteMatcher(serverRequest);
+          throw new Error('expected error');
+        } catch (e) {
+          expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
+            {
+              "_httpError": "MethodNotAllowed",
+              "detail": "Method "GET" at path "/api/%3Cimg%20src=x%20onerror=alert(document.domain)%3E" is not allowed. Must be one of: "POST".",
               "status": 405,
               "title": "Method Not Allowed",
               "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.6",
