@@ -1,6 +1,6 @@
 # chubbyts-framework-router-path-to-regexp
 
-[![CI](https://github.com/chubbyts/chubbyts-framework-router-path-to-regexp/workflows/CI/badge.svg?branch=master)](https://github.com/chubbyts/chubbyts-framework-router-path-to-regexp/actions?query=workflow%3ACI)
+[![CI](https://github.com/chubbyts/chubbyts-framework-router-path-to-regexp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/chubbyts/chubbyts-framework-router-path-to-regexp/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/chubbyts/chubbyts-framework-router-path-to-regexp/badge.svg?branch=master)](https://coveralls.io/github/chubbyts/chubbyts-framework-router-path-to-regexp?branch=master)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fchubbyts%2Fchubbyts-framework-router-path-to-regexp%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/chubbyts/chubbyts-framework-router-path-to-regexp/master)
 [![npm-version](https://img.shields.io/npm/v/@chubbyts/chubbyts-framework-router-path-to-regexp.svg)](https://www.npmjs.com/package/@chubbyts/chubbyts-framework-router-path-to-regexp)
