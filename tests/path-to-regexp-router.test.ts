@@ -4,6 +4,9 @@ import type { HttpError } from '@chubbyts/chubbyts-http-error/dist/http-error';
 import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
 import type { ServerRequest } from '@chubbyts/chubbyts-undici-server/dist/server';
 import {
+  createPathToRegexpGeneratePath,
+  createPathToRegexpGenerateUrl,
+  createPathToRegexpMatch,
   createPathToRegexpPathGenerator,
   createPathToRegexpRouteMatcher,
   createPathToRegexpUrlGenerator,
@@ -11,16 +14,16 @@ import {
 
 describe('path-to-regexp-router', () => {
   describe('routes as map', () => {
-    describe('createPathToRegexpRouteMatcher', () => {
+    describe('createPathToRegexpMatch', () => {
       test('not found', () => {
         const serverRequest = { method: 'GET', url: 'https://example.com/' } as ServerRequest;
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api', _route: 'Route' } as Route]]);
 
-        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+        const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
 
         try {
-          pathToRegexpRouteMatcher(serverRequest);
+          pathToRegexpMatch(serverRequest);
           throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
@@ -40,10 +43,10 @@ describe('path-to-regexp-router', () => {
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api', _route: 'Route' } as Route]]);
 
-        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+        const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
 
         try {
-          pathToRegexpRouteMatcher(serverRequest);
+          pathToRegexpMatch(serverRequest);
           throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
@@ -66,10 +69,10 @@ describe('path-to-regexp-router', () => {
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api', _route: 'Route' } as Route]]);
 
-        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+        const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
 
         try {
-          pathToRegexpRouteMatcher(serverRequest);
+          pathToRegexpMatch(serverRequest);
           throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
@@ -92,10 +95,10 @@ describe('path-to-regexp-router', () => {
           ['name2', { method: 'PUT', path: '/api', _route: 'Route' } as Route],
         ]);
 
-        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+        const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
 
         try {
-          pathToRegexpRouteMatcher(serverRequest);
+          pathToRegexpMatch(serverRequest);
           throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
@@ -120,10 +123,10 @@ describe('path-to-regexp-router', () => {
           ['name', { method: 'POST', path: '/api/:id', _route: 'Route' } as Route],
         ]);
 
-        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+        const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
 
         try {
-          pathToRegexpRouteMatcher(serverRequest);
+          pathToRegexpMatch(serverRequest);
           throw new Error('expected error');
         } catch (e) {
           expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
@@ -145,9 +148,9 @@ describe('path-to-regexp-router', () => {
           ['name', { method: 'GET', path: '/api', _route: 'Route' } as Route],
         ]);
 
-        const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+        const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
 
-        expect(pathToRegexpRouteMatcher(serverRequest)).toMatchInlineSnapshot(`
+        expect(pathToRegexpMatch(serverRequest)).toMatchInlineSnapshot(`
           {
             "_route": "Route",
             "attributes": {},
@@ -158,56 +161,56 @@ describe('path-to-regexp-router', () => {
       });
     });
 
-    describe('createPathToRegexpPathGenerator', () => {
+    describe('createPathToRegexpGeneratePath', () => {
       test('with attributes and query params', () => {
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
-        const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routesByName);
+        const pathToRegexpGeneratePath = createPathToRegexpGeneratePath(routesByName);
 
         expect(
-          pathToRegexpPathGenerator('name', { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' }, 'key[subKey]=value'),
+          pathToRegexpGeneratePath('name', { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' }, 'key[subKey]=value'),
         ).toMatchInlineSnapshot('"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"');
       });
 
       test('without attributes and query params', () => {
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet', _route: 'Route' } as Route]]);
 
-        const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routesByName);
+        const pathToRegexpGeneratePath = createPathToRegexpGeneratePath(routesByName);
 
-        expect(pathToRegexpPathGenerator('name')).toMatchInlineSnapshot('"/api/pet"');
+        expect(pathToRegexpGeneratePath('name')).toMatchInlineSnapshot('"/api/pet"');
       });
 
       test('without attributes', () => {
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
-        const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routesByName);
+        const pathToRegexpGeneratePath = createPathToRegexpGeneratePath(routesByName);
 
         expect(() => {
-          pathToRegexpPathGenerator('name');
+          pathToRegexpGeneratePath('name');
         }).toThrow('Missing parameters: id');
       });
 
       test('with missing route', () => {
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
-        const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routesByName);
+        const pathToRegexpGeneratePath = createPathToRegexpGeneratePath(routesByName);
 
         expect(() => {
-          pathToRegexpPathGenerator('noname');
+          pathToRegexpGeneratePath('noname');
         }).toThrow('Missing route: "noname"');
       });
     });
 
-    describe('createPathToRegexpUrlGenerator', () => {
+    describe('createPathToRegexpGenerateUrl', () => {
       test('with userInfo and port', () => {
         const serverRequest = { method: 'GET', url: 'https://user:password@example.com:10443/api' } as ServerRequest;
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
-        const pathToRegexpUrlGenerator = createPathToRegexpUrlGenerator(createPathToRegexpPathGenerator(routesByName));
+        const pathToRegexpGenerateUrl = createPathToRegexpGenerateUrl(createPathToRegexpGeneratePath(routesByName));
 
         expect(
-          pathToRegexpUrlGenerator(
+          pathToRegexpGenerateUrl(
             serverRequest,
             'name',
             { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
@@ -223,10 +226,10 @@ describe('path-to-regexp-router', () => {
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
-        const pathToRegexpUrlGenerator = createPathToRegexpUrlGenerator(createPathToRegexpPathGenerator(routesByName));
+        const pathToRegexpGenerateUrl = createPathToRegexpGenerateUrl(createPathToRegexpGeneratePath(routesByName));
 
         expect(
-          pathToRegexpUrlGenerator(
+          pathToRegexpGenerateUrl(
             serverRequest,
             'name',
             { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
@@ -242,16 +245,74 @@ describe('path-to-regexp-router', () => {
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
-        const pathToRegexpUrlGenerator = createPathToRegexpUrlGenerator(createPathToRegexpPathGenerator(routesByName));
+        const pathToRegexpGenerateUrl = createPathToRegexpGenerateUrl(createPathToRegexpGeneratePath(routesByName));
 
         expect(
-          pathToRegexpUrlGenerator(
+          pathToRegexpGenerateUrl(
             serverRequest,
             'name',
             { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
             'key[subKey]=value',
           ),
         ).toMatchInlineSnapshot('"https://example.com/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"');
+      });
+    });
+
+    describe('deprecated aliases', () => {
+      describe('createPathToRegexpRouteMatcher', () => {
+        test('matched', () => {
+          const serverRequest = { method: 'GET', url: 'https://example.com/api' } as ServerRequest;
+
+          const routesByName: RoutesByName = new Map([
+            ['name', { method: 'GET', path: '/api', _route: 'Route' } as Route],
+          ]);
+
+          const pathToRegexpRouteMatcher = createPathToRegexpRouteMatcher(routesByName);
+
+          expect(pathToRegexpRouteMatcher(serverRequest)).toMatchInlineSnapshot(`
+            {
+              "_route": "Route",
+              "attributes": {},
+              "method": "GET",
+              "path": "/api",
+            }
+          `);
+        });
+      });
+
+      describe('createPathToRegexpPathGenerator', () => {
+        test('with attributes and query params', () => {
+          const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
+
+          const pathToRegexpPathGenerator = createPathToRegexpPathGenerator(routesByName);
+
+          expect(
+            pathToRegexpPathGenerator('name', { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' }, 'key[subKey]=value'),
+          ).toMatchInlineSnapshot('"/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"');
+        });
+      });
+
+      describe('createPathToRegexpUrlGenerator', () => {
+        test('with userInfo and port', () => {
+          const serverRequest = { method: 'GET', url: 'https://user:password@example.com:10443/api' } as ServerRequest;
+
+          const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
+
+          const pathToRegexpUrlGenerator = createPathToRegexpUrlGenerator(
+            createPathToRegexpPathGenerator(routesByName),
+          );
+
+          expect(
+            pathToRegexpUrlGenerator(
+              serverRequest,
+              'name',
+              { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' },
+              'key[subKey]=value',
+            ),
+          ).toMatchInlineSnapshot(
+            '"https://user:password@example.com:10443/api/pet/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key[subKey]=value"',
+          );
+        });
       });
     });
   });

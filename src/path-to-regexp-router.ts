@@ -25,14 +25,14 @@ const decodePathname = (pathname: string): string => {
  * ```ts
  * import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
  * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
- * import { createPathToRegexpRouteMatcher } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ * import { createPathToRegexpMatch } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
  *
  * const routesByName: RoutesByName = ...;
  *
- * const pathToRegexpRouteMatcher: Match = createPathToRegexpRouteMatcher(routesByName);
+ * const pathToRegexpMatch: Match = createPathToRegexpMatch(routesByName);
  * ```
  */
-export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Match => {
+export const createPathToRegexpMatch = (routesByName: RoutesByName): Match => {
   const matchersByName: Map<string, MatchFunction<Record<string, string>>> = new Map(
     Array.from(routesByName.entries()).map(([name, route]) => [name, match(route.path)]),
   );
@@ -75,18 +75,20 @@ export const createPathToRegexpRouteMatcher = (routesByName: RoutesByName): Matc
   };
 };
 
+export const createPathToRegexpRouteMatcher = createPathToRegexpMatch;
+
 /**
  * ```ts
  * import type { GeneratePath } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
  * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
- * import { createPathToRegexpPathGenerator } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ * import { createPathToRegexpGeneratePath } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
  *
  * const routesByName: RoutesByName = ...;
  *
- * const pathToRegexpPathGenerator: GeneratePath = createPathToRegexpPathGenerator(routesByName);
+ * const pathToRegexpGeneratePath: GeneratePath = createPathToRegexpGeneratePath(routesByName);
  * ```
  */
-export const createPathToRegexpPathGenerator = (routesByName: RoutesByName): GeneratePath => {
+export const createPathToRegexpGeneratePath = (routesByName: RoutesByName): GeneratePath => {
   const compilesByName: Map<string, PathFunction<Record<string, string>>> = new Map(
     Array.from(routesByName.entries()).map(([name, route]) => [name, compile(route.path)]),
   );
@@ -104,18 +106,20 @@ export const createPathToRegexpPathGenerator = (routesByName: RoutesByName): Gen
   };
 };
 
+export const createPathToRegexpPathGenerator = createPathToRegexpGeneratePath;
+
 /**
  * ```ts
  * import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
  * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
- * import { createPathToRegexpUrlGenerator } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ * import { createPathToRegexpGenerateUrl } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
  *
  * const generatePath: GeneratePath = ...;
  *
- * const pathToRegexpUrlGenerator: GenerateUrl = createPathToRegexpUrlGenerator(generatePath);
+ * const pathToRegexpGenerateUrl: GenerateUrl = createPathToRegexpGenerateUrl(generatePath);
  * ```
  */
-export const createPathToRegexpUrlGenerator = (generatePath: GeneratePath): GenerateUrl => {
+export const createPathToRegexpGenerateUrl = (generatePath: GeneratePath): GenerateUrl => {
   return (serverRequest: ServerRequest, name: string, attributes?: Record<string, string>, query?: string) => {
     const { protocol, username, password, hostname, port } = new URL(serverRequest.url);
     const path = generatePath(name, attributes, query);
@@ -130,3 +134,5 @@ export const createPathToRegexpUrlGenerator = (generatePath: GeneratePath): Gene
     );
   };
 };
+
+export const createPathToRegexpUrlGenerator = createPathToRegexpGenerateUrl;
