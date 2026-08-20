@@ -114,12 +114,23 @@ export const createPathToRegexpPathGenerator = createPathToRegexpGeneratePath;
  * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
  * import { createPathToRegexpGenerateUrl } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
  *
- * const generatePath: GeneratePath = ...;
+ * const routesByName: RoutesByName = ...;
  *
- * const pathToRegexpGenerateUrl: GenerateUrl = createPathToRegexpGenerateUrl(generatePath);
+ * const pathToRegexpGenerateUrl: GenerateUrl = createPathToRegexpGenerateUrl(routesByName);
  * ```
  */
-export const createPathToRegexpGenerateUrl = (generatePath: GeneratePath): GenerateUrl => {
+export function createPathToRegexpGenerateUrl(routesByName: RoutesByName): GenerateUrl;
+/**
+ * @deprecated Pass a `RoutesByName` instead of a `GeneratePath`.
+ */
+// oxlint-disable-next-line typescript/unified-signatures
+export function createPathToRegexpGenerateUrl(generatePath: GeneratePath): GenerateUrl;
+export function createPathToRegexpGenerateUrl(routesByNameOrGeneratePath: RoutesByName | GeneratePath): GenerateUrl {
+  const generatePath =
+    typeof routesByNameOrGeneratePath === 'function'
+      ? routesByNameOrGeneratePath
+      : createPathToRegexpGeneratePath(routesByNameOrGeneratePath);
+
   return (serverRequest: ServerRequest, name: string, attributes?: Record<string, string>, query?: string) => {
     const { protocol, username, password, hostname, port } = new URL(serverRequest.url);
     const path = generatePath(name, attributes, query);
@@ -133,6 +144,6 @@ export const createPathToRegexpGenerateUrl = (generatePath: GeneratePath): Gener
       path
     );
   };
-};
+}
 
 export const createPathToRegexpUrlGenerator = createPathToRegexpGenerateUrl;

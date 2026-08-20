@@ -202,12 +202,12 @@ describe('path-to-regexp-router', () => {
     });
 
     describe('createPathToRegexpGenerateUrl', () => {
-      test('with userInfo and port', () => {
+      test('with routesByName, userInfo and port', () => {
         const serverRequest = { method: 'GET', url: 'https://user:password@example.com:10443/api' } as ServerRequest;
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
-        const pathToRegexpGenerateUrl = createPathToRegexpGenerateUrl(createPathToRegexpGeneratePath(routesByName));
+        const pathToRegexpGenerateUrl = createPathToRegexpGenerateUrl(routesByName);
 
         expect(
           pathToRegexpGenerateUrl(
@@ -221,7 +221,7 @@ describe('path-to-regexp-router', () => {
         );
       });
 
-      test('with username but without password and with port', () => {
+      test('with generatePath, username but without password and with port', () => {
         const serverRequest = { method: 'GET', url: 'https://user@example.com:10443/api' } as ServerRequest;
 
         const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);

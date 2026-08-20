@@ -34,8 +34,74 @@ Path-to-regex routing implementation for [chubbyts-framework][2].
 Through [NPM](https://www.npmjs.com) as [@chubbyts/chubbyts-framework-router-path-to-regexp][1].
 
 ```ts
-npm i @chubbyts/chubbyts-framework-router-path-to-regexp@^3.3.0
+npm i @chubbyts/chubbyts-framework-router-path-to-regexp@^3.4.0
 ```
+
+## Usage
+
+All examples below share the following route setup:
+
+```ts
+import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
+import { createRoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
+import { createGetRoute } from '@chubbyts/chubbyts-framework/dist/router/route';
+
+const routesByName: RoutesByName = createRoutesByName([
+  createGetRoute({
+    path: '/api/pets/:id',
+    name: 'pet_read',
+    handler: petReadHandler,
+  }),
+]);
+```
+
+### createPathToRegexpMatch
+
+Creates a `Match` function which resolves an incoming server request to the matching route, including the matched path attributes. Throws a "not found" http error if no route matches the path, or a "method not allowed" http error if a route matches the path but not the method.
+
+```ts
+import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
+import { createPathToRegexpMatch } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+
+const match: Match = createPathToRegexpMatch(routesByName);
+
+// { ..., attributes: { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' } }
+const route = match(serverRequest); // GET https://example.com/api/pets/82434d3a-7c6b-4dbf-8e4e-30ee8966a545
+```
+
+### createPathToRegexpGeneratePath
+
+Creates a `GeneratePath` function which generates a path for a given route name, with optional path attributes and query string.
+
+```ts
+import type { GeneratePath } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
+import { createPathToRegexpGeneratePath } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+
+const generatePath: GeneratePath = createPathToRegexpGeneratePath(routesByName);
+
+// /api/pets/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key=value
+const path = generatePath('pet_read', { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' }, 'key=value');
+```
+
+### createPathToRegexpGenerateUrl
+
+Creates a `GenerateUrl` function which generates an absolute url for a given route name, with optional path attributes and query string. Scheme, user info, host and port are taken from the given server request.
+
+```ts
+import type { GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
+import { createPathToRegexpGenerateUrl } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+
+const generateUrl: GenerateUrl = createPathToRegexpGenerateUrl(routesByName);
+
+// https://example.com/api/pets/82434d3a-7c6b-4dbf-8e4e-30ee8966a545?key=value
+const url = generateUrl(serverRequest, 'pet_read', { id: '82434d3a-7c6b-4dbf-8e4e-30ee8966a545' }, 'key=value');
+```
+
+### Deprecated aliases
+
+ * `createPathToRegexpRouteMatcher` is a deprecated alias for `createPathToRegexpMatch`
+ * `createPathToRegexpPathGenerator` is a deprecated alias for `createPathToRegexpGeneratePath`
+ * `createPathToRegexpUrlGenerator` is a deprecated alias for `createPathToRegexpGenerateUrl`
 
 ## Copyright
 
