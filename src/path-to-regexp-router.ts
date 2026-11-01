@@ -1,31 +1,31 @@
-import type { Route } from '@chubbyts/chubbyts-framework/dist/router/route';
-import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
-import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
-import type { MatchFunction, PathFunction } from 'path-to-regexp';
-import { compile, match } from 'path-to-regexp';
+import type { Route } from '@chubbyts/chubbyts-framework/router/route';
+import type { Match } from '@chubbyts/chubbyts-framework/router/route-matcher';
+import type { RoutesByName } from '@chubbyts/chubbyts-framework/router/routes-by-name';
+import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/router/url-generator';
+import type { ServerRequest } from '@chubbyts/chubbyts-http-types/message';
 import {
   createBadRequest,
   createMethodNotAllowed,
   createNotFound,
 } from '@chubbyts/chubbyts-http-error/dist/http-error';
-import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
-import type { ServerRequest } from '@chubbyts/chubbyts-undici-server/dist/server';
+import type { MatchFunction, PathFunction } from 'path-to-regexp';
+import { compile, match } from 'path-to-regexp';
 
-const decodePathname = (pathname: string): string => {
+const decodePath = (path: string): string => {
   try {
-    return decodeURI(pathname);
+    return decodeURI(path);
   } catch {
     throw createBadRequest({
-      detail: `The path "${pathname}" contains invalid percent-encoding.`,
+      detail: `The path "${path}" contains invalid percent-encoding.`,
     });
   }
 };
 
 /**
  * ```ts
- * import type { Match } from '@chubbyts/chubbyts-framework/dist/router/route-matcher';
- * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
- * import { createPathToRegexpMatch } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ * import type { Match } from '@chubbyts/chubbyts-framework/router/route-matcher';
+ * import type { RoutesByName } from '@chubbyts/chubbyts-framework/router/routes-by-name';
+ * import { createPathToRegexpMatch } from '@chubbyts/chubbyts-framework-router-path-to-regexp/path-to-regexp-router';
  *
  * const routesByName: RoutesByName = ...;
  *
@@ -37,24 +37,24 @@ export const createPathToRegexpMatch = (routesByName: RoutesByName): Match => {
     Array.from(routesByName.entries()).map(([name, route]) => [name, match(route.path)]),
   );
 
-  return (request: ServerRequest): Route => {
-    const url = new URL(request.url);
+  return (serverRequest: ServerRequest): Route => {
+    const path = serverRequest.uri.path;
 
-    const pathname = decodePathname(url.pathname);
+    const decodedPath = decodePath(path);
 
     const matchWithMethods: Array<string> = [];
 
     for (const [name, route] of routesByName.entries()) {
       const matcherByName = matchersByName.get(name) as MatchFunction<Record<string, string>>;
 
-      const matchedPathname = matcherByName(pathname);
+      const matchedPath = matcherByName(decodedPath);
 
-      if (!matchedPathname) {
+      if (!matchedPath) {
         continue;
       }
 
-      if (route.method === request.method) {
-        return { ...route, attributes: matchedPathname.params as Record<string, string> };
+      if (route.method === serverRequest.method) {
+        return { ...route, attributes: matchedPath.params as Record<string, string> };
       }
 
       // oxlint-disable-next-line functional/immutable-data
@@ -63,25 +63,23 @@ export const createPathToRegexpMatch = (routesByName: RoutesByName): Match => {
 
     if (matchWithMethods.length > 0) {
       throw createMethodNotAllowed({
-        detail: `Method "${request.method}" at path "${url.pathname}" is not allowed. Must be one of: "${matchWithMethods.join(
+        detail: `Method "${serverRequest.method}" at path "${path}" is not allowed. Must be one of: "${matchWithMethods.join(
           '", "',
         )}".`,
       });
     }
 
     throw createNotFound({
-      detail: `The path "${url.pathname}" you are looking for could not be found.`,
+      detail: `The path "${path}" you are looking for could not be found.`,
     });
   };
 };
 
-export const createPathToRegexpRouteMatcher = createPathToRegexpMatch;
-
 /**
  * ```ts
- * import type { GeneratePath } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
- * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
- * import { createPathToRegexpGeneratePath } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ * import type { GeneratePath } from '@chubbyts/chubbyts-framework/router/url-generator';
+ * import type { RoutesByName } from '@chubbyts/chubbyts-framework/router/routes-by-name';
+ * import { createPathToRegexpGeneratePath } from '@chubbyts/chubbyts-framework-router-path-to-regexp/path-to-regexp-router';
  *
  * const routesByName: RoutesByName = ...;
  *
@@ -106,44 +104,30 @@ export const createPathToRegexpGeneratePath = (routesByName: RoutesByName): Gene
   };
 };
 
-export const createPathToRegexpPathGenerator = createPathToRegexpGeneratePath;
-
 /**
  * ```ts
- * import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/dist/router/url-generator';
- * import type { RoutesByName } from '@chubbyts/chubbyts-framework/dist/router/routes-by-name';
- * import { createPathToRegexpGenerateUrl } from '@chubbyts/chubbyts-framework-router-path-to-regexp/dist/path-to-regexp-router';
+ * import type { GenerateUrl } from '@chubbyts/chubbyts-framework/router/url-generator';
+ * import type { RoutesByName } from '@chubbyts/chubbyts-framework/router/routes-by-name';
+ * import { createPathToRegexpGenerateUrl } from '@chubbyts/chubbyts-framework-router-path-to-regexp/path-to-regexp-router';
  *
  * const routesByName: RoutesByName = ...;
  *
  * const pathToRegexpGenerateUrl: GenerateUrl = createPathToRegexpGenerateUrl(routesByName);
  * ```
  */
-export function createPathToRegexpGenerateUrl(routesByName: RoutesByName): GenerateUrl;
-/**
- * @deprecated Pass a `RoutesByName` instead of a `GeneratePath`.
- */
-// oxlint-disable-next-line typescript/unified-signatures
-export function createPathToRegexpGenerateUrl(generatePath: GeneratePath): GenerateUrl;
-export function createPathToRegexpGenerateUrl(routesByNameOrGeneratePath: RoutesByName | GeneratePath): GenerateUrl {
-  const generatePath =
-    typeof routesByNameOrGeneratePath === 'function'
-      ? routesByNameOrGeneratePath
-      : createPathToRegexpGeneratePath(routesByNameOrGeneratePath);
+export const createPathToRegexpGenerateUrl = (routesByName: RoutesByName): GenerateUrl => {
+  const generatePath = createPathToRegexpGeneratePath(routesByName);
 
   return (serverRequest: ServerRequest, name: string, attributes?: Record<string, string>, query?: string) => {
-    const { protocol, username, password, hostname, port } = new URL(serverRequest.url);
-    const path = generatePath(name, attributes, query);
+    const { scheme, userInfo, host, port } = serverRequest.uri;
 
     return (
-      protocol +
-      '//' +
-      (username && password ? `${username}:${password}@` : '') +
-      hostname +
-      (port ? ':' + port : '') +
-      path
+      scheme +
+      '://' +
+      (userInfo !== '' ? `${userInfo}@` : '') +
+      host +
+      (port !== undefined ? ':' + port : '') +
+      generatePath(name, attributes, query)
     );
   };
-}
-
-export const createPathToRegexpUrlGenerator = createPathToRegexpGenerateUrl;
+};

@@ -1,5 +1,8 @@
 allowBuilds:
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@chubbyts/chubbyts-framework@4.0.2'
+  - '@chubbyts/chubbyts-http-types@4.1.0'
 packageExtensions:
   '@stryker-mutator/core':
     dependencies:
