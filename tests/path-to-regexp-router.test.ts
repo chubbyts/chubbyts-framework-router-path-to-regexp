@@ -7,7 +7,7 @@ import {
   createPathToRegexpGeneratePath,
   createPathToRegexpGenerateUrl,
   createPathToRegexpMatch,
-} from '../src/path-to-regexp-router';
+} from '../src/path-to-regexp-router.js';
 
 const createServerRequest = (method: string, uri: Partial<Uri>): ServerRequest =>
   ({
