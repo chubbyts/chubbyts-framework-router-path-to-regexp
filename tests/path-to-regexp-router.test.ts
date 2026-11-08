@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import type { Route } from '@chubbyts/chubbyts-framework/router/route';
 import type { RoutesByName } from '@chubbyts/chubbyts-framework/router/routes-by-name';
 import type { ServerRequest, Uri } from '@chubbyts/chubbyts-http-types/message';
-import type { HttpError } from '@chubbyts/chubbyts-http-error/dist/http-error';
+import type { HttpError } from '@chubbyts/chubbyts-http-error/http-error';
 import {
   createPathToRegexpGeneratePath,
   createPathToRegexpGenerateUrl,

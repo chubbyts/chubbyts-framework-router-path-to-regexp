@@ -3,11 +3,7 @@ import type { Match } from '@chubbyts/chubbyts-framework/router/route-matcher';
 import type { RoutesByName } from '@chubbyts/chubbyts-framework/router/routes-by-name';
 import type { GeneratePath, GenerateUrl } from '@chubbyts/chubbyts-framework/router/url-generator';
 import type { ServerRequest } from '@chubbyts/chubbyts-http-types/message';
-import {
-  createBadRequest,
-  createMethodNotAllowed,
-  createNotFound,
-} from '@chubbyts/chubbyts-http-error/dist/http-error';
+import { createBadRequest, createMethodNotAllowed, createNotFound } from '@chubbyts/chubbyts-http-error/http-error';
 import type { MatchFunction, PathFunction } from 'path-to-regexp';
 import { compile, match } from 'path-to-regexp';
 

@@ -3,6 +3,8 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@chubbyts/chubbyts-framework@4.0.2'
   - '@chubbyts/chubbyts-http-types@4.1.0'
+  - '@chubbyts/chubbyts-function-mock@2.4.0'
+  - '@chubbyts/chubbyts-http-error@3.6.0'
 packageExtensions:
   '@stryker-mutator/core':
     dependencies:
