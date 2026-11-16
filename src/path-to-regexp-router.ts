@@ -7,10 +7,14 @@ import { createBadRequest, createMethodNotAllowed, createNotFound } from '@chubb
 import type { MatchFunction, PathFunction } from 'path-to-regexp';
 import { compile, match } from 'path-to-regexp';
 
-const decodePath = (path: string): string => {
+const matchPath = (
+  matcher: MatchFunction<Record<string, string>>,
+  path: string,
+): ReturnType<MatchFunction<Record<string, string>>> => {
   try {
-    return decodeURI(path);
+    return matcher(path);
   } catch {
+    // the matcher only throws a URIError (decodeURIComponent on malformed percent-encoding)
     throw createBadRequest({
       detail: `The path "${path}" contains invalid percent-encoding.`,
     });
@@ -36,14 +40,12 @@ export const createPathToRegexpMatch = (routesByName: RoutesByName): Match => {
   return (serverRequest: ServerRequest): Route => {
     const path = serverRequest.uri.path;
 
-    const decodedPath = decodePath(path);
-
     const matchWithMethods: Array<string> = [];
 
     for (const [name, route] of routesByName.entries()) {
       const matcherByName = matchersByName.get(name) as MatchFunction<Record<string, string>>;
 
-      const matchedPath = matcherByName(decodedPath);
+      const matchedPath = matchPath(matcherByName, path);
 
       if (!matchedPath) {
         continue;

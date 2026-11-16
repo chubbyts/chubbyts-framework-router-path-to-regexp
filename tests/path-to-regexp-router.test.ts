@@ -50,9 +50,9 @@ describe('path-to-regexp-router', () => {
     });
 
     test('bad request on invalid percent-encoding', () => {
-      const serverRequest = createServerRequest('GET', { path: '/%zz' });
+      const serverRequest = createServerRequest('GET', { path: '/api/pet/%zz' });
 
-      const routesByName: RoutesByName = new Map([['name', { path: '/api', _route: 'Route' } as Route]]);
+      const routesByName: RoutesByName = new Map([['name', { path: '/api/pet/:id', _route: 'Route' } as Route]]);
 
       const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
 
@@ -63,7 +63,7 @@ describe('path-to-regexp-router', () => {
         expect({ ...(e as HttpError) }).toMatchInlineSnapshot(`
           {
             "_httpError": "BadRequest",
-            "detail": "The path "/%zz" contains invalid percent-encoding.",
+            "detail": "The path "/api/pet/%zz" contains invalid percent-encoding.",
             "status": 400,
             "title": "Bad Request",
             "type": "https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1",
@@ -186,6 +186,24 @@ describe('path-to-regexp-router', () => {
           "path": "/api/pet/:id",
         }
       `);
+    });
+
+    // https://github.com/chubbyts/chubbyts-framework-router-path-to-regexp/issues/2
+    test.each([
+      ['%41', '/api/pets/%2541'],
+      ['a%2Fb', '/api/pets/a%252Fb'],
+      ['50%', '/api/pets/50%25'],
+    ])('matched with attributes decoded once: %s', (id, path) => {
+      const routesByName: RoutesByName = new Map([
+        ['pet_read', { method: 'GET', path: '/api/pets/:id', _route: 'Route' } as Route],
+      ]);
+
+      const generatePath = createPathToRegexpGeneratePath(routesByName);
+      const pathToRegexpMatch = createPathToRegexpMatch(routesByName);
+
+      expect(generatePath('pet_read', { id })).toBe(path);
+
+      expect(pathToRegexpMatch(createServerRequest('GET', { path })).attributes).toEqual({ id });
     });
   });
 
